@@ -6,8 +6,12 @@ const { MatchingEngine } = require('../services/matchingEngine');
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+try {
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+} catch (e) {
+    // Vercel par folder read-only hota hai, isliye ignore karo
 }
 
 // 1. Upload & Reconcile Receipt

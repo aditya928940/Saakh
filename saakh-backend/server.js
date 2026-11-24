@@ -19,31 +19,32 @@ try {
     seedDatabase();
 }
 
-const server = app.listen(PORT, () => {
-    console.log(`=======================================================`);
-    console.log(`  🌾 SAAKH BACKEND SERVER RUNNING ON PORT ${PORT}       `);
-    console.log(`  🔗 Health Check: http://localhost:${PORT}/api/health   `);
-    console.log(`  📦 Native SQLite: WAL mode active                     `);
-    console.log(`  🛡️  Audit Trail: Immutable history enabled             `);
-    console.log(`=======================================================`);
-});
-
-server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`\n❌ [PORT ${PORT} BUSY]: Another instance of Saakh Server is already running on port ${PORT}!`);
-        console.error(`👉 Run this command in PowerShell to free port ${PORT}:`);
-        console.error(`   Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
-        process.exit(1);
-    } else {
-        console.error('[Saakh Server Error]:', err);
-    }
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-    console.log('\n[Saakh Server] Gracefully shutting down...');
-    server.close(() => {
-        console.log('[Saakh Server] Closed HTTP server.');
-        process.exit(0);
+// Vercel par app.listen nahi chalta; local par chalta hai
+if (!process.env.VERCEL) {
+    const server = app.listen(PORT, () => {
+        console.log(`=======================================================`);
+        console.log(`  SAAKH BACKEND SERVER RUNNING ON PORT ${PORT}`);
+        console.log(`  Health Check: http://localhost:${PORT}/api/health`);
+        console.log(`=======================================================`);
     });
-});
+
+    server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.error(`\n[PORT ${PORT} BUSY]: Another instance is already running on port ${PORT}!`);
+            process.exit(1);
+        } else {
+            console.error('[Saakh Server Error]:', err);
+        }
+    });
+
+    // Graceful shutdown
+    process.on('SIGINT', () => {
+        console.log('\n[Saakh Server] Gracefully shutting down...');
+        server.close(() => {
+            console.log('[Saakh Server] Closed HTTP server.');
+            process.exit(0);
+        });
+    });
+}
+
+module.exports = app;

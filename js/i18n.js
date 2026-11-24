@@ -743,10 +743,13 @@ function langPicker() {
 // Initialize html lang attribute
 document.documentElement.lang = localStorage.getItem('saakh_lang') || 'en';
 
+// Deploy ke baad yahan apne backend ka Vercel link daalo (end mein / nahi), jaise 'https://saakh-ijia.vercel.app'
+const BACKEND_URL = '';
+
 // Base API URL resolver connecting frontend to backend
 const API_BASE = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
     ? (window.location.port === '5000' ? '' : 'http://localhost:5000')
-    : '';
+    : BACKEND_URL;
 
 // Global fetch wrapper ensuring Accept-Language and X-Language headers are always sent
 if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
